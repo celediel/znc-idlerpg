@@ -232,7 +232,12 @@ class CIdleRPGMod : public CModule {
         }
 
         // Bot has op?
-        if (!pBot->HasPerm(CChan::Op)) {
+        auto is_op = [](CNick* bot) {
+            return (bot->HasPerm(CChan::Op) || bot->HasPerm(CChan::HalfOp) ||
+                    bot->HasPerm(CChan::Admin) || bot->HasPerm(CChan::Owner));
+        };
+
+        if (!is_op(pBot)) {
             PutModule(t_f(
                 "Error logging in: Bot [{1}] not operator in in channel [{2}]")(
                 sChan.GetBotnick(), sChan.GetChannel()));
